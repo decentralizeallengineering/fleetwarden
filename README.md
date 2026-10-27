@@ -47,6 +47,10 @@ All hooks fail open: an internal error never blocks a tool call.
 
 prints a `permissionDecision: deny` JSON with the rewrite advice. Run the tests with `python3 -m pytest`.
 
+## See also
+
+See also: intentpin, leanagents
+
 ## License
 
 Apache-2.0, see `LICENSE` and `NOTICE`.
