@@ -1,0 +1,22 @@
+#!/bin/bash
+# claude-session-up NAME : start one long-lived Claude Code session in tmux socket NAME.
+# Reads $CLAUDE_SESSIONS_DIR/NAME.env (default ~/.config/claude-sessions/NAME.env) with:
+#   SID=<session uuid>   CWD=<working dir>   FLAGS=<extra claude flags, optional>
+#   SETTINGS=<settings.json path, optional: passed as --settings>
+#   STRICT_MCP=1         optional: start with no MCP servers (--strict-mcp-config, empty config)
+#   REMOTE_CONTROL=1     optional: add --remote-control NAME
+#   CLAUDE_BIN=<path>    optional: claude executable (default: claude on PATH)
+# The same NAME is used for the systemd unit claude@NAME, tmux -L NAME and claude -n NAME.
+case ${1-} in -h|--help|"") echo "usage: claude-session-up NAME   (see the comment block at the top of this script)"; echo "Starts one long-lived Claude Code session in tmux socket NAME from its .env file."; exit 0 ;; esac
+set -euo pipefail
+N="$1"
+. "${CLAUDE_SESSIONS_DIR:-$HOME/.config/claude-sessions}/$N.env"
+: "${SID:?}" "${CWD:?}"
+if tmux -L "$N" has-session -t "$N" 2>/dev/null; then echo "$N already running" >&2; exit 0; fi
+if pgrep -f -- "(--resume|--session-id) $SID" >/dev/null; then echo "$N: $SID already held by another process" >&2; exit 1; fi
+if compgen -G "$HOME/.claude/projects/*/$SID.jsonl" >/dev/null; then ID="--resume $SID"; else ID="--session-id $SID"; fi
+EXTRA=""
+if [ -n "${STRICT_MCP:-}" ]; then EXTRA="--strict-mcp-config --mcp-config '{\"mcpServers\":{}}'"; fi
+if [ -n "${SETTINGS:-}" ]; then EXTRA="$EXTRA --settings $SETTINGS"; fi
+if [ -n "${REMOTE_CONTROL:-}" ]; then EXTRA="$EXTRA --remote-control $N"; fi
+exec tmux -L "$N" new-session -d -s "$N" -c "$CWD" "exec ${CLAUDE_BIN:-claude} $ID -n $N $EXTRA ${FLAGS:-}"

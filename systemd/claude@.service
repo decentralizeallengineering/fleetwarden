@@ -1,0 +1,21 @@
+[Unit]
+Description=Claude Code session %i (tmux -L %i)
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=%h/.config/claude-sessions/%i.env
+
+[Service]
+Type=forking
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+# Seconds to wait before starting, so the network and login are up after a boot.
+Environment=DELAY=45
+EnvironmentFile=%h/.config/claude-sessions/%i.env
+ExecStartPre=/bin/sleep ${DELAY}
+ExecStart=%h/.local/bin/claude-session-up %i
+ExecStop=-/usr/bin/tmux -L %i kill-server
+TimeoutStartSec=300
+TimeoutStopSec=30
+Restart=no
+
+[Install]
+WantedBy=default.target
