@@ -1,23 +1,85 @@
 {
   "hooks": {
     "SessionStart": [
-      {"hooks": [{"type": "command", "command": "python3 \"$HOME/.claude/hooks/intent_inject.py\""}]}
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/intent_inject.py\""
+          }
+        ]
+      }
     ],
     "PreToolUse": [
-      {"matcher": "Bash", "hooks": [
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/rm_guard.py\""},
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/wait_guard.py\""},
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/protected_dir_guard.py\""}
-      ]},
-      {"matcher": "Write|Edit|NotebookEdit", "hooks": [
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/protected_dir_guard.py\""}
-      ]},
-      {"matcher": "Agent|Task", "hooks": [
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/agent_lean.py\""}
-      ]},
-      {"matcher": "ScheduleWakeup|CronCreate", "hooks": [
-        {"type": "command", "command": "python3 \"$HOME/.claude/hooks/cadence_guard.py\""}
-      ]}
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/rm_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/wait_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/protected_dir_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/protected_set_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/rm_catastrophe_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/hang_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/kill_guard.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/protected_dir_guard.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/agent_lean.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "ScheduleWakeup|CronCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/cadence_guard.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/haiku_cap.py\""
+          }
+        ]
+      }
     ]
   }
 }

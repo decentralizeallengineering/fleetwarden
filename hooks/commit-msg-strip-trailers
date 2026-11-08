@@ -1,0 +1,12 @@
+#!/bin/sh
+# commit-msg hook template: strips forbidden trailers (keeps history free of tool-added trailers).
+# Removes lines starting with Co-Authored-By:, Claude-Session:, or "Generated with"
+# (with an optional leading emoji), then trims trailing blank lines.
+# Not installed into any repo. Install per repo: cp to <repo>/.git/hooks/commit-msg
+msg="$1"
+[ -n "$msg" ] && [ -f "$msg" ] || exit 0
+out="$msg.tmp.$$"
+grep -Ev "^(Co-Authored-By:|Claude-Session:|(🤖[[:space:]]*)?Generated with)" "$msg" \
+  | sed -e :a -e "/^\n*$/{\$d;N;ba" -e "}" > "$out" || true
+mv -f "$out" "$msg"
+exit 0
